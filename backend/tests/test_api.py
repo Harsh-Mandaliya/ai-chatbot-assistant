@@ -84,3 +84,34 @@ def test_rate_limit(client):
     res = client.post(url, json={"content": "hi"}, headers=HEADERS)
     assert res.status_code == 429
     assert "Retry-After" in res.headers
+
+
+def test_subjects(client):
+    subjects = client.get("/api/subjects").json()
+    ids = [s["id"] for s in subjects]
+    assert ids[0] == "general"
+    assert {"python", "cloud", "ai", "dsa"} <= set(ids)
+    assert all(len(s["starters"]) >= 3 for s in subjects)
+
+
+def test_study_options_are_validated(client):
+    convo = client.post("/api/conversations", headers=HEADERS).json()
+    url = f"/api/conversations/{convo['id']}/messages"
+    ok = client.post(url, json={"content": "hi", "subject": "python", "level": "advanced", "mode": "quiz"}, headers=HEADERS)
+    assert ok.status_code == 200
+    bad = client.post(url, json={"content": "hi", "level": "expert"}, headers=HEADERS)
+    assert bad.status_code == 422
+
+
+def test_system_prompt_follows_subject_level_and_mode():
+    from app.persona import system_prompt
+
+    prompt = system_prompt("Nova", subject="cloud", level="advanced", mode="quiz")
+    assert "Cloud & DevOps" in prompt
+    assert "trade-offs" in prompt
+    assert "Quiz mode is on" in prompt
+    assert "only this" in system_prompt("Nova")
+
+
+def test_define_validates_term(client):
+    assert client.get("/api/define", params={"term": "x"}).status_code == 422
