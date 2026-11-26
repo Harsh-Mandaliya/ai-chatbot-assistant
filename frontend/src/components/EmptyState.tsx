@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
-import type { Subject } from '../types'
+import type { Engine, Subject } from '../types'
 import { CapIcon } from './Icons'
 
 interface Props {
   name: string
   subject?: Subject
   quiz: boolean
+  engine: Engine
   onPick: (prompt: string) => void
 }
 
@@ -14,7 +15,7 @@ const greeting = () => {
   return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
 }
 
-export function EmptyState({ name, subject, quiz, onPick }: Props) {
+export function EmptyState({ name, subject, quiz, engine, onPick }: Props) {
   const topic = subject && subject.id !== 'general' ? subject.name : 'tech'
   const starters = quiz
     ? [`Quiz me on ${topic}`, `Give me a hard ${topic} question`]
@@ -35,8 +36,18 @@ export function EmptyState({ name, subject, quiz, onPick }: Props) {
       </motion.h1>
       <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>
         I'm {name}, your study buddy for code, cloud, AI and everything else in IT.
-        {quiz ? ' Quiz mode is on, so I will ask the questions.' : ' Pick a starter or ask your own.'}
+        {quiz ? ' Quiz mode is on, so I will ask the questions.' : ' Pick a starter, ask your own, or drop in a screenshot.'}
       </motion.p>
+      <motion.div
+        className={`mode-pill ${engine}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.18 }}
+      >
+        {engine === 'offline'
+          ? 'Offline mode: unlimited questions, unlimited images, Deep dive unlocked'
+          : 'Online mode: free cloud AI, with daily limits'}
+      </motion.div>
       <div className="ideas">
         {starters.map((prompt, i) => (
           <motion.button

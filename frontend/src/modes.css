@@ -1,0 +1,248 @@
+/* Online / Offline switch, image attachments and the offline setup card. */
+
+/* ---------- Mode switch ---------- */
+.mode-switch {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.mode-switch button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.mode-switch button.is-active {
+  background: var(--user-bubble);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+.mode-switch .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.mode-switch .dot.ok {
+  background: var(--success);
+}
+.mode-switch .dot.off {
+  background: var(--warn);
+}
+
+.mode-pill {
+  display: inline-block;
+  margin: -12px 0 22px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.mode-pill.offline {
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+  color: var(--success);
+}
+
+.segmented button.is-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.75;
+}
+
+/* ---------- Composer with attachments ---------- */
+.composer {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px;
+}
+.composer-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+.attach {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.attach:hover {
+  background: var(--surface-2);
+  color: var(--accent);
+}
+.composer-wrap.is-dragging .composer {
+  border-color: var(--accent);
+  border-style: dashed;
+  background: var(--accent-soft);
+}
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 4px 8px;
+  overflow: hidden;
+}
+.thumb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumb button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.65);
+  color: #fff;
+}
+
+/* ---------- Images inside messages ---------- */
+.bubble-images {
+  display: grid;
+  gap: 6px;
+  margin: 2px 0 8px;
+}
+.bubble-images.count-1 {
+  grid-template-columns: minmax(0, 280px);
+}
+.bubble-images.count-2 {
+  grid-template-columns: repeat(2, minmax(0, 160px));
+}
+.bubble-images.count-3 {
+  grid-template-columns: repeat(3, minmax(0, 120px));
+}
+.bubble-images a {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.2);
+}
+.bubble-images img {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+}
+.bubble-images.count-2 img,
+.bubble-images.count-3 img {
+  aspect-ratio: 1;
+}
+
+/* ---------- Offline setup card ---------- */
+.offline-setup {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.offline-setup-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--user-bubble);
+}
+.offline-setup-body h3 {
+  margin: 2px 0 4px;
+  font-size: 1rem;
+}
+.offline-setup-body p {
+  margin: 0 0 8px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.offline-setup-body ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.offline-setup-body li + li {
+  margin-top: 4px;
+}
+.offline-setup-body code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+.offline-setup-body a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@media (max-width: 820px) {
+  .mode-switch button {
+    padding: 6px 9px;
+  }
+  .mode-switch button span {
+    display: none;
+  }
+  .topbar .status {
+    max-width: 46vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+}
+
+/* ---------- Which history the sidebar shows ---------- */
+.history-mode {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.history-mode.offline {
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+  color: var(--success);
+}
+.history-mode span {
+  font-weight: 500;
+  font-size: 0.74rem;
+  opacity: 0.85;
+}

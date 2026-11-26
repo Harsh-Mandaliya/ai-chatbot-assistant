@@ -4,6 +4,7 @@ import type { Conversation } from '../types'
 import { CheckIcon, CloseIcon, PencilIcon, PlusIcon, SearchIcon, TrashIcon } from './Icons'
 
 interface Props {
+  engine: 'online' | 'offline'
   conversations: Conversation[]
   activeId: string | null
   open: boolean
@@ -35,7 +36,7 @@ function groupByDate(items: Conversation[]) {
   return Object.entries(groups)
 }
 
-export function Sidebar({ conversations, activeId, open, onClose, onSelect, onNew, onRename, onDelete }: Props) {
+export function Sidebar({ engine, conversations, activeId, open, onClose, onSelect, onNew, onRename, onDelete }: Props) {
   const [query, setQuery] = useState('')
   const [editing, setEditing] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
@@ -85,8 +86,17 @@ export function Sidebar({ conversations, activeId, open, onClose, onSelect, onNe
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search chats" />
         </label>
 
+        <p className={`history-mode ${engine}`}>
+          {engine === 'offline' ? 'Offline chats' : 'Online chats'}
+          <span>{engine === 'offline' ? 'on this computer' : 'cloud AI'}</span>
+        </p>
+
         <nav className="history">
-          {conversations.length === 0 && <p className="history-empty">Your chats will show up here.</p>}
+          {conversations.length === 0 && (
+            <p className="history-empty">
+              Your {engine === 'offline' ? 'offline' : 'online'} chats will show up here.
+            </p>
+          )}
           {conversations.length > 0 && groups.length === 0 && <p className="history-empty">No chats match "{query}".</p>}
 
           {groups.map(([label, items]) => (

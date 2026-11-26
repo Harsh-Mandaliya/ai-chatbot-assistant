@@ -1,4 +1,4 @@
-import type { Conversation, ConversationDetail, Definition, Health, StreamEvent, StudyOptions, Subject } from '../types'
+import type { Conversation, ConversationDetail, Definition, Engine, Engines, Health, StreamEvent, StudyOptions, Subject } from '../types'
 
 const BASE = import.meta.env.VITE_API_URL ?? ''
 
@@ -63,9 +63,12 @@ async function toError(res: Response): Promise<ApiError> {
 export const api = {
   health: () => request<Health>('/api/health'),
   subjects: () => request<Subject[]>('/api/subjects'),
-  define: (term: string) => request<Definition>(`/api/define?term=${encodeURIComponent(term)}`),
-  list: () => request<Conversation[]>('/api/conversations'),
-  create: () => request<Conversation>('/api/conversations', { method: 'POST', body: '{}' }),
+  engines: () => request<Engines>('/api/engines'),
+  define: (term: string, engine: Engine) =>
+    request<Definition>(`/api/define?term=${encodeURIComponent(term)}&engine=${engine}`),
+  list: (engine: Engine) => request<Conversation[]>(`/api/conversations?engine=${engine}`),
+  create: (engine: Engine) =>
+    request<Conversation>('/api/conversations', { method: 'POST', body: JSON.stringify({ engine }) }),
   get: (id: string) => request<ConversationDetail>(`/api/conversations/${id}`),
   rename: (id: string, title: string) =>
     request<Conversation>(`/api/conversations/${id}`, { method: 'PATCH', body: JSON.stringify({ title }) }),
@@ -82,6 +85,7 @@ export async function streamMessage(
   onEvent: (event: StreamEvent) => void,
   signal: AbortSignal,
   study: StudyOptions,
+  images: string[] = [],
   retry = false,
 ): Promise<void> {
   let res: Response
@@ -89,7 +93,7 @@ export async function streamMessage(
     res = await fetch(`${BASE}/api/conversations/${conversationId}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Client-Id': clientId() },
-      body: JSON.stringify({ content, retry, ...study }),
+      body: JSON.stringify({ content, images, retry, ...study }),
       signal,
     })
   } catch (err) {

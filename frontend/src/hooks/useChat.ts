@@ -20,19 +20,25 @@ export function useChat(study: StudyOptions) {
   const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
-  const refreshList = useCallback(async () => {
-    try {
-      setConversations(await api.list())
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not load your chats.')
-    }
-  }, [])
+  const engine = study.engine
 
+  // Online and Offline have separate histories: switching mode swaps the
+  // sidebar over and starts on a fresh chat in that mode.
   useEffect(() => {
-    // Initial load of the sidebar.
+    let cancelled = false
+    abortRef.current?.abort()
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    void refreshList()
-  }, [refreshList])
+    setActiveId(null)
+    setMessages([])
+    setConversations([])
+    api
+      .list(engine)
+      .then((list) => !cancelled && setConversations(list))
+      .catch((err) => !cancelled && setError(err instanceof ApiError ? err.message : 'Could not load your chats.'))
+    return () => {
+      cancelled = true
+    }
+  }, [engine])
 
   const open = useCallback(async (id: string) => {
     abortRef.current?.abort()
@@ -60,12 +66,12 @@ export function useChat(study: StudyOptions) {
   const stop = useCallback(() => abortRef.current?.abort(), [])
 
   const send = useCallback(
-    async (text: string, retry = false) => {
+    async (text: string, images: string[] = [], retry = false) => {
       const content = text.trim()
-      if (!content || streaming) return
+      if ((!content && images.length === 0) || streaming) return
       setError(null)
 
-      const userTemp: Message = { id: tempId(), role: 'user', content, created_at: now() }
+      const userTemp: Message = { id: tempId(), role: 'user', content, images, created_at: now() }
       const replyTemp: Message = { id: tempId(), role: 'assistant', content: '', created_at: now(), status: 'streaming' }
       setMessages((m) => [...m, userTemp, replyTemp])
       setStreaming(true)
@@ -78,7 +84,7 @@ export function useChat(study: StudyOptions) {
       try {
         let id = activeId
         if (!id) {
-          const convo = await api.create()
+          const convo = await api.create(studyRef.current.engine)
           id = convo.id
           setActiveId(id)
           setConversations((list) => [convo, ...list])
@@ -109,6 +115,7 @@ export function useChat(study: StudyOptions) {
           },
           controller.signal,
           studyRef.current,
+          images,
           retry,
         )
       } catch (err) {
@@ -142,7 +149,9 @@ export function useChat(study: StudyOptions) {
       const idx = list.lastIndexOf(lastUser)
       return list.slice(0, idx)
     })
-    void send(lastUser.content, true)
+    // Pictures that never reached the server are still data: URLs, so send them again.
+    const unsent = (lastUser.images ?? []).filter((src) => src.startsWith('data:'))
+    void send(lastUser.content, unsent, true)
   }, [messages, send])
 
   const rename = useCallback(async (id: string, title: string) => {
@@ -175,6 +184,7 @@ export function useChat(study: StudyOptions) {
     loading,
     error,
     dismissError: () => setError(null),
+    showError: setError,
     open,
     startNew,
     send,

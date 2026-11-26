@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { api, ApiError } from '../lib/api'
-import type { Definition } from '../types'
+import type { Definition, Engine } from '../types'
 import { BookIcon, SearchIcon } from './Icons'
 import { Popover } from './Popover'
 import { TypingIndicator } from './TypingIndicator'
 
-/** Quick definitions from Wikipedia, for when you just need the gist of a term. */
-export function DefinePanel() {
+/** Quick definitions: Wikipedia when online, the local model when offline. */
+export function DefinePanel({ engine }: { engine: Engine }) {
   const [term, setTerm] = useState('')
   const [result, setResult] = useState<Definition | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +19,7 @@ export function DefinePanel() {
     setError(null)
     setResult(null)
     try {
-      setResult(await api.define(term.trim()))
+      setResult(await api.define(term.trim(), engine))
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Lookup failed.')
     } finally {
@@ -57,7 +57,9 @@ export function DefinePanel() {
                 )}
               </>
             )}
-            {!busy && !error && !result && <p className="define-hint">Definitions come from Wikipedia.</p>}
+            {!busy && !error && !result && <p className="define-hint">
+                {engine === 'offline' ? 'Answered by the model on this computer.' : 'Definitions come from Wikipedia.'}
+              </p>}
           </div>
         </>
       )}
