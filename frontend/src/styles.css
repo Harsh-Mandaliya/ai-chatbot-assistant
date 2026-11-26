@@ -664,10 +664,6 @@ kbd {
 }
 
 /* ---------- Composer ---------- */
-.composer-wrap {
-  padding: 8px 20px calc(14px + env(safe-area-inset-bottom));
-  background: linear-gradient(to top, var(--bg) 70%, transparent);
-}
 .composer {
   max-width: 780px;
   margin: 0 auto;
@@ -803,10 +799,6 @@ kbd {
   }
   .row-user .bubble-wrap {
     max-width: 88%;
-  }
-  .composer-wrap {
-    padding-left: 12px;
-    padding-right: 12px;
   }
   .composer-hint {
     display: none;

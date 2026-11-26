@@ -102,3 +102,33 @@ export const SparkIcon = (p: IconProps) => (
     <path d="M19 15c.3 1.8 1.2 2.7 3 3-1.8.3-2.7 1.2-3 3-.3-1.8-1.2-2.7-3-3 1.8-.3 2.7-1.2 3-3Z" fill="currentColor" stroke="none" />
   </svg>
 )
+
+export const PaletteIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4c0-4.4-4-8.2-9-8.2Z" />
+    <circle cx="7.5" cy="11" r="1.2" fill="currentColor" />
+    <circle cx="10.5" cy="7.2" r="1.2" fill="currentColor" />
+    <circle cx="15" cy="7.5" r="1.2" fill="currentColor" />
+  </svg>
+)
+
+export const BookIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z" />
+    <path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5" />
+  </svg>
+)
+
+export const QuizIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.3M12 17h.01" />
+  </svg>
+)
+
+export const CapIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M2 9l10-5 10 5-10 5L2 9Z" />
+    <path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6" />
+  </svg>
+)

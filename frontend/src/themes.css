@@ -1,0 +1,66 @@
+/* Extra colour themes and the classic font. The White and Dark themes live in styles.css. */
+
+:root[data-theme='blue'] {
+  --bg: #eef4ff;
+  --bg-soft: #e2ecff;
+  --surface: #ffffff;
+  --surface-2: #e9f0fe;
+  --border: #cfdcf5;
+  --ink: #0f1d3a;
+  --ink-soft: #2c3e63;
+  --muted: #6378a0;
+  --accent: #2563eb;
+  --accent-2: #3b82f6;
+  --accent-ink: #ffffff;
+  --accent-soft: #dbe7ff;
+  --user-bubble: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  --shadow: 0 1px 2px rgb(20 40 90 / 0.06), 0 8px 24px rgb(20 40 90 / 0.08);
+  --shadow-lg: 0 12px 40px rgb(20 40 90 / 0.14);
+  color-scheme: light;
+}
+
+:root[data-theme='multicolor'] {
+  --bg: #fff8fb;
+  --bg-soft: #f6f0ff;
+  --surface: #ffffff;
+  --surface-2: #f7f1ff;
+  --border: #ead9f5;
+  --ink: #23123a;
+  --ink-soft: #44305f;
+  --muted: #8a76a3;
+  --accent: #c026d3;
+  --accent-2: #f97316;
+  --accent-ink: #ffffff;
+  --accent-soft: #fbe7ff;
+  --user-bubble: linear-gradient(120deg, #f97316, #ec4899 45%, #8b5cf6 75%, #06b6d4);
+  --shadow: 0 1px 2px rgb(80 20 120 / 0.06), 0 8px 24px rgb(80 20 120 / 0.08);
+  --shadow-lg: 0 12px 40px rgb(80 20 120 / 0.14);
+  color-scheme: light;
+}
+
+:root[data-theme='multicolor'] body {
+  background:
+    radial-gradient(900px 500px at 0% 0%, rgb(249 115 22 / 0.1), transparent 60%),
+    radial-gradient(800px 600px at 100% 0%, rgb(139 92 246 / 0.12), transparent 60%),
+    radial-gradient(900px 600px at 50% 100%, rgb(6 182 212 / 0.1), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+:root[data-theme='multicolor'] .sidebar {
+  background: rgb(255 255 255 / 0.55);
+  backdrop-filter: blur(14px);
+}
+:root[data-theme='multicolor'] .topbar,
+:root[data-theme='multicolor'] .dock {
+  background: transparent;
+}
+:root[data-theme='multicolor'] .history-item.is-active::before {
+  background: var(--user-bubble);
+}
+
+:root[data-font='serif'] {
+  --font: 'Times New Roman', Times, 'Liberation Serif', Georgia, serif;
+}
+:root[data-font='serif'] body {
+  font-size: 16.5px;
+}
