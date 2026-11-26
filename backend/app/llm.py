@@ -30,14 +30,22 @@ async def _demo_stream() -> AsyncIterator[str]:
         yield word + " "
 
 
-async def stream_reply(history: list[dict[str, str]], settings: Settings) -> AsyncIterator[str]:
-    """Yield the assistant's reply piece by piece."""
+async def stream_reply(
+    history: list[dict[str, str]],
+    settings: Settings,
+    *,
+    subject: str = "general",
+    level: str = "beginner",
+    mode: str = "chat",
+) -> AsyncIterator[str]:
+    """Yield the tutor's reply piece by piece."""
     if settings.demo_mode:
         async for chunk in _demo_stream():
             yield chunk
         return
 
-    messages = [{"role": "system", "content": system_prompt(settings.assistant_name)}, *history]
+    prompt = system_prompt(settings.assistant_name, subject=subject, level=level, mode=mode)
+    messages = [{"role": "system", "content": prompt}, *history]
     try:
         stream = await _client(settings).chat.completions.create(
             model=settings.llm_model,

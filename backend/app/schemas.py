@@ -14,6 +14,9 @@ class MessageIn(BaseModel):
     content: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
     # Set when the previous reply failed and the same question is asked again.
     retry: bool = False
+    subject: str = Field(default="general", pattern=r"^[a-z]{2,20}$")
+    level: Literal["beginner", "advanced"] = "beginner"
+    mode: Literal["chat", "quiz"] = "chat"
 
     @field_validator("content")
     @classmethod
@@ -60,3 +63,15 @@ class ConversationOut(BaseModel):
 
 class ConversationDetail(ConversationOut):
     messages: list[MessageOut]
+
+
+class SubjectOut(BaseModel):
+    id: str
+    name: str
+    starters: list[str]
+
+
+class Definition(BaseModel):
+    title: str
+    summary: str
+    url: str | None = None

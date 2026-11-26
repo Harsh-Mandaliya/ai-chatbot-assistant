@@ -69,7 +69,9 @@ async def send_message(
         parts: list[str] = []
         failed = False
         try:
-            async for chunk in stream_reply(history, settings):
+            async for chunk in stream_reply(
+                history, settings, subject=body.subject, level=body.level, mode=body.mode
+            ):
                 parts.append(chunk)
                 yield _sse({"type": "token", "content": chunk})
         except LLMError as exc:

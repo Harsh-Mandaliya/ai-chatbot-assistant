@@ -35,8 +35,8 @@ def _float(name: str, default: float) -> float:
 class Settings:
     llm_base_url: str = field(default_factory=lambda: os.getenv("LLM_BASE_URL", "").strip())
     llm_api_key: str = field(default_factory=lambda: os.getenv("LLM_API_KEY", "").strip())
-    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "llama-3.3-70b-versatile"))
-    llm_temperature: float = field(default_factory=lambda: _float("LLM_TEMPERATURE", 0.8))
+    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gemini-flash-latest"))
+    llm_temperature: float = field(default_factory=lambda: _float("LLM_TEMPERATURE", 0.7))
     assistant_name: str = field(default_factory=lambda: os.getenv("ASSISTANT_NAME", "Nova"))
     database_url: str = field(default_factory=_database_url)
     cors_origins: tuple[str, ...] = field(
