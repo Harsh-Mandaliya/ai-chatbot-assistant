@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, Response, status
+from typing import Literal
+
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -11,10 +13,15 @@ router = APIRouter(prefix="/api/conversations", tags=["conversations"])
 
 
 @router.get("", response_model=list[ConversationOut])
-def list_conversations(owner: str = Depends(client_id), db: Session = Depends(get_db)):
+def list_conversations(
+    engine: Literal["online", "offline"] = Query(default="online"),
+    owner: str = Depends(client_id),
+    db: Session = Depends(get_db),
+):
+    """Chats for one mode only: Online and Offline histories are kept apart."""
     query = (
         select(Conversation)
-        .where(Conversation.client_id == owner)
+        .where(Conversation.client_id == owner, Conversation.engine == engine)
         .order_by(Conversation.updated_at.desc())
         .limit(200)
     )
@@ -27,7 +34,11 @@ def create_conversation(
     owner: str = Depends(client_id),
     db: Session = Depends(get_db),
 ):
-    convo = Conversation(client_id=owner, title=(body.title if body and body.title else "New chat"))
+    convo = Conversation(
+        client_id=owner,
+        title=(body.title if body and body.title else "New chat"),
+        engine=body.engine if body else "online",
+    )
     db.add(convo)
     db.commit()
     return convo

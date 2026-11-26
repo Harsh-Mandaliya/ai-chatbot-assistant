@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 MAX_MESSAGE_LENGTH = 4000
 
@@ -10,21 +10,34 @@ MAX_MESSAGE_LENGTH = 4000
 UtcDatetime = Annotated[datetime, AfterValidator(lambda d: d if d.tzinfo else d.replace(tzinfo=timezone.utc))]
 
 
+MAX_IMAGES_PER_MESSAGE = 6
+# Base64 makes files about a third bigger; this is a rough upper bound before decoding.
+MAX_DATA_URL_LENGTH = 16 * 1024 * 1024
+
+
 class MessageIn(BaseModel):
-    content: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
+    content: str = Field(default="", max_length=MAX_MESSAGE_LENGTH)
+    # Screenshots or photos as data URLs (data:image/png;base64,...).
+    images: list[Annotated[str, Field(max_length=MAX_DATA_URL_LENGTH)]] = Field(
+        default_factory=list, max_length=MAX_IMAGES_PER_MESSAGE
+    )
     # Set when the previous reply failed and the same question is asked again.
     retry: bool = False
+    engine: Literal["online", "offline"] = "online"
     subject: str = Field(default="general", pattern=r"^[a-z]{2,20}$")
-    level: Literal["beginner", "advanced"] = "beginner"
+    level: Literal["beginner", "advanced", "deep"] = "beginner"
     mode: Literal["chat", "quiz"] = "chat"
 
     @field_validator("content")
     @classmethod
-    def not_blank(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
+    def tidy(cls, value: str) -> str:
+        return value.strip()
+
+    @model_validator(mode="after")
+    def has_something(self) -> "MessageIn":
+        if not self.content and not self.images:
             raise ValueError("Message can't be empty")
-        return value
+        return self
 
 
 class MessageOut(BaseModel):
@@ -33,11 +46,14 @@ class MessageOut(BaseModel):
     id: str
     role: Literal["user", "assistant"]
     content: str
+    engine: Literal["online", "offline"] = "online"
+    images: list[str] = []
     created_at: UtcDatetime
 
 
 class ConversationCreate(BaseModel):
     title: str | None = Field(default=None, max_length=120)
+    engine: Literal["online", "offline"] = "online"
 
 
 class ConversationUpdate(BaseModel):
@@ -57,6 +73,7 @@ class ConversationOut(BaseModel):
 
     id: str
     title: str
+    engine: Literal["online", "offline"] = "online"
     created_at: UtcDatetime
     updated_at: UtcDatetime
 

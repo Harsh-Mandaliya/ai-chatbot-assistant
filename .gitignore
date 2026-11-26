@@ -225,3 +225,5 @@ frontend/dist/
 .env.*
 !.env.example
 !frontend/src/lib/
+backend/uploads/
+backend/test_uploads/
