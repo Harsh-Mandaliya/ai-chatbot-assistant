@@ -20,8 +20,8 @@
   --shadow-lg: 0 12px 40px rgb(60 40 20 / 0.12);
   --radius: 18px;
   --sidebar-w: 280px;
-  --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+  --font: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
   color-scheme: light;
 }
 
