@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 // so the browser only ever talks to one origin.
 export default defineConfig({
   plugins: [react()],
-  build: { chunkSizeWarningLimit: 700 },
+  build: { chunkSizeWarningLimit: 1000 },
   server: {
     port: 5173,
     proxy: {

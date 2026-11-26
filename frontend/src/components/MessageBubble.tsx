@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import { memo, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown, { type Components } from 'react-markdown'
+import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import type { Message } from '../types'
+import { CodeBlock } from './CodeBlock'
 import { CheckIcon, CopyIcon, RetryIcon, SparkIcon } from './Icons'
 import { TypingIndicator } from './TypingIndicator'
 
@@ -10,6 +12,11 @@ interface Props {
   message: Message
   name: string
   onRetry?: () => void
+}
+
+const markdownComponents: Components = {
+  a: (props) => <a {...props} target="_blank" rel="noreferrer" />,
+  pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
 }
 
 const time = (iso: string) => new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
@@ -53,7 +60,8 @@ export const MessageBubble = memo(function MessageBubble({ message, name, onRetr
             <div className={`markdown ${message.status === 'streaming' ? 'is-streaming' : ''}`}>
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                components={{ a: (props) => <a {...props} target="_blank" rel="noreferrer" /> }}
+                rehypePlugins={[rehypeHighlight]}
+                components={markdownComponents}
               >
                 {message.content}
               </ReactMarkdown>
