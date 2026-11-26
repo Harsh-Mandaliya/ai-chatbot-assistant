@@ -55,7 +55,18 @@ export const MessageBubble = memo(function MessageBubble({ message, name, onRetr
           {waiting ? (
             <TypingIndicator />
           ) : isUser ? (
-            <p>{message.content}</p>
+            <>
+              {message.images && message.images.length > 0 && (
+                <div className={`bubble-images count-${Math.min(message.images.length, 3)}`}>
+                  {message.images.map((src, i) => (
+                    <a key={i} href={src} target="_blank" rel="noreferrer">
+                      <img src={src} alt={`Shared image ${i + 1}`} loading="lazy" />
+                    </a>
+                  ))}
+                </div>
+              )}
+              {message.content && <p>{message.content}</p>}
+            </>
           ) : (
             <div className={`markdown ${message.status === 'streaming' ? 'is-streaming' : ''}`}>
               <ReactMarkdown
