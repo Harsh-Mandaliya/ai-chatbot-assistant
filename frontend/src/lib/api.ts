@@ -1,4 +1,4 @@
-import type { Conversation, ConversationDetail, Health, StreamEvent } from '../types'
+import type { Conversation, ConversationDetail, Definition, Health, StreamEvent, StudyOptions, Subject } from '../types'
 
 const BASE = import.meta.env.VITE_API_URL ?? ''
 
@@ -62,6 +62,8 @@ async function toError(res: Response): Promise<ApiError> {
 
 export const api = {
   health: () => request<Health>('/api/health'),
+  subjects: () => request<Subject[]>('/api/subjects'),
+  define: (term: string) => request<Definition>(`/api/define?term=${encodeURIComponent(term)}`),
   list: () => request<Conversation[]>('/api/conversations'),
   create: () => request<Conversation>('/api/conversations', { method: 'POST', body: '{}' }),
   get: (id: string) => request<ConversationDetail>(`/api/conversations/${id}`),
@@ -79,6 +81,7 @@ export async function streamMessage(
   content: string,
   onEvent: (event: StreamEvent) => void,
   signal: AbortSignal,
+  study: StudyOptions,
   retry = false,
 ): Promise<void> {
   let res: Response
@@ -86,7 +89,7 @@ export async function streamMessage(
     res = await fetch(`${BASE}/api/conversations/${conversationId}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Client-Id': clientId() },
-      body: JSON.stringify({ content, retry }),
+      body: JSON.stringify({ content, retry, ...study }),
       signal,
     })
   } catch (err) {

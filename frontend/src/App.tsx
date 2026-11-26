@@ -1,21 +1,37 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { Composer } from './components/Composer'
+import { DefinePanel } from './components/DefinePanel'
 import { EmptyState } from './components/EmptyState'
-import { CloseIcon, MenuIcon, MoonIcon, PlusIcon, SunIcon } from './components/Icons'
+import { CloseIcon, MenuIcon, PlusIcon } from './components/Icons'
 import { MessageBubble } from './components/MessageBubble'
+import { SettingsMenu } from './components/SettingsMenu'
 import { Sidebar } from './components/Sidebar'
+import { StudyBar } from './components/StudyBar'
 import { TypingIndicator } from './components/TypingIndicator'
 import { useChat } from './hooks/useChat'
 import { api } from './lib/api'
-import { useTheme } from './lib/theme'
-import type { Health } from './types'
+import { usePrefs } from './lib/theme'
+import type { Health, StudyOptions, Subject } from './types'
+
+const STUDY_KEY = 'chat.study'
+const DEFAULT_STUDY: StudyOptions = { subject: 'general', level: 'beginner', mode: 'chat' }
+
+function loadStudy(): StudyOptions {
+  try {
+    return { ...DEFAULT_STUDY, ...JSON.parse(localStorage.getItem(STUDY_KEY) ?? '{}') }
+  } catch {
+    return DEFAULT_STUDY
+  }
+}
 
 export default function App() {
-  const chat = useChat()
-  const { theme, toggle } = useTheme()
+  const [study, setStudy] = useState<StudyOptions>(loadStudy)
+  const chat = useChat(study)
+  const prefs = usePrefs()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [health, setHealth] = useState<Health | null>(null)
+  const [subjects, setSubjects] = useState<Subject[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
   const stickToBottom = useRef(true)
 
@@ -24,7 +40,18 @@ export default function App() {
 
   useEffect(() => {
     api.health().then(setHealth).catch(() => setHealth(null))
+    api.subjects().then(setSubjects).catch(() => setSubjects([]))
   }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STUDY_KEY, JSON.stringify(study))
+    } catch {
+      /* storage unavailable */
+    }
+  }, [study])
+
+  const subject = subjects.find((s) => s.id === study.subject) ?? subjects[0]
 
   // Follow the reply as it streams, unless the reader scrolled up.
   useEffect(() => {
@@ -74,25 +101,14 @@ export default function App() {
           <div className="topbar-title">
             <h2>{active?.title ?? 'New chat'}</h2>
             <span className={`status ${health ? (health.demo ? 'is-demo' : 'is-live') : 'is-off'}`}>
-              {health ? (health.demo ? 'Demo mode' : `${name} is online`) : 'Offline'}
+              {health ? (health.demo ? 'Demo mode' : `${name} is ready to help`) : 'Offline'}
             </span>
           </div>
           <button className="icon-btn only-mobile" onClick={newChat} aria-label="New chat">
             <PlusIcon />
           </button>
-          <button className="icon-btn theme-btn" onClick={toggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={theme}
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-              </motion.span>
-            </AnimatePresence>
-          </button>
+          <DefinePanel />
+          <SettingsMenu theme={prefs.theme} font={prefs.font} onTheme={prefs.setTheme} onFont={prefs.setFont} />
         </header>
 
         <div className="scroll" ref={scrollRef} onScroll={onScroll}>
@@ -102,7 +118,7 @@ export default function App() {
                 <TypingIndicator />
               </div>
             ) : chat.messages.length === 0 ? (
-              <EmptyState name={name} onPick={send} />
+              <EmptyState name={name} subject={subject} quiz={study.mode === 'quiz'} onPick={send} />
             ) : (
               chat.messages.map((m, i) => (
                 <MessageBubble
@@ -133,7 +149,10 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        <Composer streaming={chat.streaming} onSend={send} onStop={chat.stop} />
+        <div className="dock">
+          {subjects.length > 0 && <StudyBar subjects={subjects} study={study} onChange={setStudy} />}
+          <Composer streaming={chat.streaming} onSend={send} onStop={chat.stop} />
+        </div>
       </main>
     </div>
   )

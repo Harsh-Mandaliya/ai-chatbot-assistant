@@ -1,0 +1,316 @@
+/* Study controls, popovers and code blocks. */
+
+.dock {
+  padding: 6px 20px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 75%, transparent);
+}
+
+/* ---------- Study bar ---------- */
+.studybar {
+  max-width: 780px;
+  margin: 0 auto 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.subject-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 10px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  box-shadow: var(--shadow);
+}
+.subject-select select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 4px 4px 0;
+  cursor: pointer;
+  max-width: 220px;
+}
+.subject-select option {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.segmented button {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.segmented button.is-active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.segmented.small button {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 34px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.chip:hover {
+  border-color: var(--accent);
+}
+.chip.is-active {
+  background: var(--user-bubble);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* ---------- Popovers ---------- */
+.popover-anchor {
+  position: relative;
+}
+.icon-btn.is-on {
+  background: var(--surface-2);
+  color: var(--accent);
+}
+.popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 300px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  z-index: 30;
+  transform-origin: top right;
+}
+.popover.define {
+  width: 360px;
+}
+.popover-label {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.popover-label:not(:first-child) {
+  margin-top: 14px;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.swatch:hover {
+  background: var(--surface-2);
+}
+.swatch.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.swatch-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1);
+}
+.swatch-light {
+  background: linear-gradient(135deg, #ffffff 50%, #ff7a59 50%);
+  color: #1f1b17;
+}
+.swatch-dark {
+  background: linear-gradient(135deg, #151311 50%, #ff8a5c 50%);
+}
+.swatch-blue {
+  background: linear-gradient(135deg, #eef4ff 50%, #2563eb 50%);
+}
+.swatch-multicolor {
+  background: conic-gradient(#f97316, #ec4899, #8b5cf6, #06b6d4, #22c55e, #f97316);
+}
+.popover .segmented {
+  display: flex;
+}
+.popover .segmented button {
+  flex: 1;
+}
+
+.define-search {
+  margin-bottom: 10px;
+}
+.define-body {
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 0.9rem;
+}
+.define-body h4 {
+  margin: 4px 0 6px;
+  font-size: 0.98rem;
+}
+.define-body p {
+  margin: 0 0 8px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+.define-body a {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.define-body .define-hint {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.define-body .define-error {
+  color: var(--danger);
+}
+
+/* ---------- Code blocks ---------- */
+.markdown .code {
+  margin: 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #16181d;
+  border: 1px solid rgb(255 255 255 / 0.06);
+}
+.code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px 6px 14px;
+  background: rgb(255 255 255 / 0.05);
+  color: #9aa3b2;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+.code-head button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #c9d1dc;
+  font-size: 0.76rem;
+}
+.code-head button:hover {
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+}
+.markdown .code pre {
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #e6e8ee;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in {
+  color: #c792ea;
+}
+.hljs-string,
+.hljs-regexp {
+  color: #c3e88d;
+}
+.hljs-number,
+.hljs-literal {
+  color: #f78c6c;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #697098;
+  font-style: italic;
+}
+.hljs-title,
+.hljs-section {
+  color: #82aaff;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-property,
+.hljs-variable {
+  color: #ffcb6b;
+}
+.hljs-tag,
+.hljs-name,
+.hljs-selector-class,
+.hljs-selector-id {
+  color: #f07178;
+}
+.hljs-meta,
+.hljs-type,
+.hljs-params {
+  color: #89ddff;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 820px) {
+  .dock {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .studybar {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .subject-select select {
+    max-width: 140px;
+  }
+  .popover,
+  .popover.define {
+    position: fixed;
+    top: 62px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+}

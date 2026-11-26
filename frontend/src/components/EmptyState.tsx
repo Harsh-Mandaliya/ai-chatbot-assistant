@@ -1,19 +1,25 @@
 import { motion } from 'framer-motion'
-import { SparkIcon } from './Icons'
+import type { Subject } from '../types'
+import { CapIcon } from './Icons'
 
-const IDEAS = [
-  { title: 'Plan a weekend', prompt: 'Help me plan a relaxed two-day trip from Ahmedabad on a small budget.' },
-  { title: 'Explain something', prompt: 'Explain how the internet actually gets data to my phone, like I am curious but not technical.' },
-  { title: 'Write with me', prompt: 'Help me write a short, friendly message asking my manager for Friday off.' },
-  { title: 'Debug my code', prompt: 'Why does my React useEffect run twice in development?' },
-]
+interface Props {
+  name: string
+  subject?: Subject
+  quiz: boolean
+  onPick: (prompt: string) => void
+}
 
 const greeting = () => {
   const h = new Date().getHours()
   return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
 }
 
-export function EmptyState({ name, onPick }: { name: string; onPick: (prompt: string) => void }) {
+export function EmptyState({ name, subject, quiz, onPick }: Props) {
+  const topic = subject && subject.id !== 'general' ? subject.name : 'tech'
+  const starters = quiz
+    ? [`Quiz me on ${topic}`, `Give me a hard ${topic} question`]
+    : (subject?.starters ?? [])
+
   return (
     <div className="empty">
       <motion.div
@@ -22,28 +28,29 @@ export function EmptyState({ name, onPick }: { name: string; onPick: (prompt: st
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 18 }}
       >
-        <SparkIcon width={30} height={30} />
+        <CapIcon width={30} height={30} />
       </motion.div>
       <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-        {greeting()}! I'm {name}.
+        {greeting()}! What are we studying today?
       </motion.h1>
       <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>
-        Ask me anything, or pick one of these to get going.
+        I'm {name}, your study buddy for code, cloud, AI and everything else in IT.
+        {quiz ? ' Quiz mode is on, so I will ask the questions.' : ' Pick a starter or ask your own.'}
       </motion.p>
       <div className="ideas">
-        {IDEAS.map((idea, i) => (
+        {starters.map((prompt, i) => (
           <motion.button
-            key={idea.title}
+            key={prompt}
             className="idea"
-            onClick={() => onPick(idea.prompt)}
+            onClick={() => onPick(prompt)}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 + i * 0.06 }}
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
           >
-            <strong>{idea.title}</strong>
-            <span>{idea.prompt}</span>
+            <strong>{subject && subject.id !== 'general' ? subject.name : 'Try this'}</strong>
+            <span>{prompt}</span>
           </motion.button>
         ))}
       </div>

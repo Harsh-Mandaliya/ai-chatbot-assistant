@@ -32,3 +32,24 @@ export type StreamEvent =
   | { type: 'token'; content: string }
   | { type: 'done'; message: Message | null }
   | { type: 'error'; message: string }
+
+export interface Subject {
+  id: string
+  name: string
+  starters: string[]
+}
+
+export interface Definition {
+  title: string
+  summary: string
+  url: string | null
+}
+
+export type Level = 'beginner' | 'advanced'
+export type Mode = 'chat' | 'quiz'
+
+export interface StudyOptions {
+  subject: string
+  level: Level
+  mode: Mode
+}

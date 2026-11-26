@@ -19,6 +19,8 @@ export function Composer({ streaming, onSend, onStop }: Props) {
     if (!el) return
     el.style.height = 'auto'
     el.style.height = `${el.scrollHeight}px`
+    // Only show a scrollbar once the text is taller than the box can grow.
+    el.style.overflowY = el.scrollHeight > 200 ? 'auto' : 'hidden'
   }, [text])
 
   const submit = () => {
@@ -51,7 +53,7 @@ export function Composer({ streaming, onSend, onStop }: Props) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Message..."
+          placeholder="Ask a study question..."
           aria-label="Message"
           autoFocus
         />

@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, ApiError, streamMessage } from '../lib/api'
-import type { Conversation, Message } from '../types'
+import type { Conversation, Message, StudyOptions } from '../types'
 
 const tempId = () => `tmp-${Math.random().toString(36).slice(2)}`
 const now = () => new Date().toISOString()
 
-export function useChat() {
+export function useChat(study: StudyOptions) {
+  // Read the latest study options at send time without re-creating callbacks.
+  const studyRef = useRef(study)
+  useEffect(() => {
+    studyRef.current = study
+  }, [study])
+
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
@@ -102,6 +108,7 @@ export function useChat() {
             }
           },
           controller.signal,
+          studyRef.current,
           retry,
         )
       } catch (err) {
